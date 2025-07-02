@@ -15,36 +15,6 @@
 - **Axios** 1.10.0 - Cliente HTTP
 - **Tailwind CSS** - Estilização (classes utilitárias)
 
-## 📁 Estrutura do Projeto
-
-```
-login_app/
-├── backend/
-│   ├── manage.py
-│   ├── db.sqlite3
-│   ├── accounts/
-│   │   ├── models.py
-│   │   ├── serializers.py
-│   │   ├── views.py
-│   │   ├── urls.py
-│   │   └── ...
-│   └── login_projeto/
-│       ├── settings.py
-│       ├── urls.py
-│       └── ...
-└── frontend/
-    └── auth-frontend/
-        ├── package.json
-        ├── public/
-        └── src/
-            ├── App.js
-            ├── index.js
-            └── pages/
-                ├── Login.js
-                ├── Register.js
-                └── UserList.js
-```
-
 ## 🚀 Instalação e Configuração
 
 ### Pré-requisitos
@@ -96,31 +66,6 @@ npm install
 npm start
 ```
 
-## 🎯 Como Usar
-
-1. **Acesse a aplicação**: Abra `http://localhost:3000` no seu navegador
-2. **Registro**: Clique em "Registre-se" para criar uma nova conta
-3. **Login**: Use suas credenciais para fazer login
-4. **Área Protegida**: Após o login, você será redirecionado para a área protegida
-5. **Logout**: Use o botão de logout centralizado para sair
-
-### Fluxo de Navegação
-```
-/ → /login → /register ↔ /login → /users → logout → /login
-```
-
-## 📡 API Endpoints
-
-### Base URL: `http://127.0.0.1:8000/api/`
-
-| Método | Endpoint | Descrição | Autenticação |
-|--------|----------|-----------|--------------|
-| POST | `/register/` | Registra novo usuário | ❌ |
-| POST | `/login/` | Autentica usuário | ❌ |
-| POST | `/token/refresh/` | Renova token JWT | ✅ |
-| GET | `/protected/` | Endpoint protegido | ✅ |
-| GET | `/users/` | Lista usuários | ✅ |
-
 ### Exemplos de Requisições
 
 #### Registro
@@ -156,12 +101,6 @@ POST /api/login/
 - ✅ Confirmação de cadastro
 - ✅ Link para login
 
-### Área Protegida
-- ✅ Verificação de autenticação
-- ✅ Botão de logout centralizado
-- ✅ Conteúdo exclusivo para usuários logados
-- ✅ Redirecionamento automático se não autenticado
-
 ## 🔧 Configurações Importantes
 
 ### Backend Settings
@@ -193,25 +132,3 @@ REST_FRAMEWORK = {
 ### Logs Úteis
 - Backend: Console do Django
 - Frontend: Console do navegador (F12)
-
-## 🤝 Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido com ❤️ para demonstrar um sistema completo de autenticação.
-
----
-
-### 📞 Suporte
-
-Se você encontrar algum problema ou tiver dúvidas, abra uma issue no repositório.
