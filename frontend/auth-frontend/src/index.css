@@ -50,3 +50,65 @@ code {
 .fade-in {
   animation: fadeIn 0.5s ease-out;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Classes personalizadas */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading animation */
+.loading-dots::after {
+  content: '';
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Task priority indicators */
+.priority-low { @apply border-l-green-400; }
+.priority-medium { @apply border-l-yellow-400; }
+.priority-high { @apply border-l-orange-400; }
+.priority-urgent { @apply border-l-red-400; }
+
+/* Task status indicators */
+.status-completed { @apply bg-green-50 border-green-200; }
+.status-cancelled { @apply bg-red-50 border-red-200; }
+.status-in-progress { @apply bg-blue-50 border-blue-200; }
+.status-pending { @apply bg-gray-50 border-gray-200; }
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom scrollbar */

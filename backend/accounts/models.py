@@ -2,11 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# Create your models here.
-
 class Task(models.Model):
-    """Modelo para representar uma tarefa do usuário"""
-    
     PRIORITY_CHOICES = [
         ('low', 'Baixa'),
         ('medium', 'Média'),
@@ -39,8 +35,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
     completed_at = models.DateTimeField(blank=True, null=True, verbose_name='Concluído em')
-    
-    # Relacionamento com o usuário
+
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
@@ -58,18 +53,15 @@ class Task(models.Model):
         return f"{self.title} - {self.get_status_display()}"
     
     def mark_as_completed(self):
-        """Marca a tarefa como concluída"""
         self.status = 'completed'
         self.completed_at = timezone.now()
         self.save()
     
     def is_overdue(self):
-        """Verifica se a tarefa está atrasada"""
         if self.due_date and self.status != 'completed':
             return timezone.now() > self.due_date
         return False
     
     @property
     def is_completed(self):
-        """Propriedade para verificar se a tarefa está concluída"""
         return self.status == 'completed'

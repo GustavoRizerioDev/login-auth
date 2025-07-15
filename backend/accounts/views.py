@@ -44,7 +44,6 @@ class ProtectedView(APIView):
     def get(self, request):
         return Response({"msg": f"Olá, {request.user.username}!"})
 
-# Serializer para retornar informações do usuário
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -58,18 +57,14 @@ class UserListView(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
-# Views para Tasks
 class TaskViewSet(ModelViewSet):
-    """ViewSet completo para gerenciar tarefas"""
-    
+
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        """Retorna apenas as tarefas do usuário logado"""
         return Task.objects.filter(user=self.request.user)
     
     def get_serializer_class(self):
-        """Retorna o serializer apropriado baseado na action"""
         if self.action == 'create':
             return TaskCreateSerializer
         elif self.action in ['update', 'partial_update']:
@@ -77,12 +72,10 @@ class TaskViewSet(ModelViewSet):
         return TaskSerializer
     
     def perform_create(self, serializer):
-        """Associa a tarefa ao usuário logado"""
         serializer.save(user=self.request.user)
     
     @action(detail=True, methods=['patch'])
     def mark_completed(self, request, pk=None):
-        """Action para marcar tarefa como concluída"""
         task = self.get_object()
         task.mark_as_completed()
         serializer = TaskSerializer(task)
@@ -90,21 +83,18 @@ class TaskViewSet(ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def completed(self, request):
-        """Retorna apenas tarefas concluídas"""
         completed_tasks = self.get_queryset().filter(status='completed')
         serializer = TaskSerializer(completed_tasks, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def pending(self, request):
-        """Retorna apenas tarefas pendentes"""
         pending_tasks = self.get_queryset().filter(status='pending')
         serializer = TaskSerializer(pending_tasks, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def overdue(self, request):
-        """Retorna tarefas atrasadas"""
         overdue_tasks = []
         for task in self.get_queryset().filter(status__in=['pending', 'in_progress']):
             if task.is_overdue():
@@ -114,7 +104,6 @@ class TaskViewSet(ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def by_priority(self, request):
-        """Retorna tarefas agrupadas por prioridade"""
         priority = request.query_params.get('priority', None)
         if priority:
             tasks = self.get_queryset().filter(priority=priority)
@@ -124,14 +113,12 @@ class TaskViewSet(ModelViewSet):
         return Response(serializer.data)
 
 class TaskListView(APIView):
-    """View simples para listar tarefas do usuário"""
-    
+
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
         tasks = Task.objects.filter(user=request.user)
         
-        # Filtros opcionais
         status_filter = request.query_params.get('status', None)
         priority_filter = request.query_params.get('priority', None)
         
@@ -152,8 +139,7 @@ class TaskListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TaskDetailView(APIView):
-    """View para operações detalhadas com uma tarefa específica"""
-    
+
     permission_classes = [IsAuthenticated]
     
     def get_object(self, pk, user):
@@ -190,8 +176,7 @@ class TaskDetailView(APIView):
         return Response({"message": "Tarefa deletada com sucesso"}, status=status.HTTP_204_NO_CONTENT)
 
 class TaskStatsView(APIView):
-    """View para estatísticas das tarefas do usuário"""
-    
+
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
