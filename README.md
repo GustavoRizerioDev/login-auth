@@ -135,6 +135,18 @@ npm start
 - `GET /api/users/` - Listar usuários (autenticado)
 - `GET /api/protected/` - Rota protegida de teste
 
+### 📋 Tarefas (Nova Funcionalidade)
+- `GET /api/tasks/` - Listar tarefas do usuário
+- `POST /api/tasks/` - Criar nova tarefa
+- `GET /api/tasks/{id}/` - Obter tarefa específica
+- `PUT /api/tasks/{id}/` - Atualizar tarefa
+- `DELETE /api/tasks/{id}/` - Deletar tarefa
+- `PATCH /api/tasks/{id}/mark_completed/` - Marcar como concluída
+- `GET /api/tasks/completed/` - Listar tarefas concluídas
+- `GET /api/tasks/pending/` - Listar tarefas pendentes
+- `GET /api/tasks/overdue/` - Listar tarefas atrasadas
+- `GET /api/task-stats/` - Estatísticas das tarefas
+
 ### Exemplos de Requisições
 
 #### Registro de Usuário
@@ -184,6 +196,66 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 }
 ```
 
+#### Criar Nova Tarefa
+```javascript
+POST /api/tasks/
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json
+
+{
+  "title": "Estudar Django REST Framework",
+  "description": "Revisar conceitos de serializers e viewsets",
+  "priority": "high",
+  "due_date": "2025-07-20T15:00:00Z"
+}
+
+// Resposta de sucesso:
+{
+  "id": 1,
+  "title": "Estudar Django REST Framework",
+  "description": "Revisar conceitos de serializers e viewsets",
+  "priority": "high",
+  "status": "pending",
+  "due_date": "2025-07-20T15:00:00Z",
+  "created_at": "2025-07-15T10:00:00Z",
+  "updated_at": "2025-07-15T10:00:00Z",
+  "completed_at": null,
+  "user": "usuario123",
+  "is_overdue": false,
+  "is_completed": false
+}
+```
+
+#### Listar Tarefas do Usuário
+```javascript
+GET /api/tasks/
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+// Resposta: Array de tarefas do usuário autenticado
+```
+
+#### Obter Estatísticas das Tarefas
+```javascript
+GET /api/task-stats/
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+// Resposta:
+{
+  "total": 10,
+  "completed": 3,
+  "pending": 5,
+  "in_progress": 2,
+  "cancelled": 0,
+  "overdue": 1,
+  "by_priority": {
+    "low": 2,
+    "medium": 4,
+    "high": 3,
+    "urgent": 1
+  }
+}
+```
+
 ## 🎨 Funcionalidades
 
 ### Frontend (React)
@@ -198,11 +270,21 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ### Backend (Django REST API)
 - ✅ **API RESTful** - Endpoints bem estruturados
 - ✅ **Autenticação JWT** - Tokens de acesso e refresh
+- ✅ **Sistema de Tarefas** - CRUD completo para gerenciamento de tarefas
+- ✅ **Filtros e Estatísticas** - Endpoints avançados para tarefas
 - ✅ **Validação de Dados** - Serializers com validação
 - ✅ **CORS Configurado** - Comunicação frontend/backend
 - ✅ **Admin Interface** - Painel administrativo Django
 - ✅ **Banco PostgreSQL** - Persistência de dados robusta
 - ✅ **Middlewares de Segurança** - Proteções integradas
+
+### 📋 Sistema de Tarefas
+1. **Criação**: Usuários podem criar tarefas com título, descrição, prioridade e data de vencimento
+2. **Gerenciamento**: Status (pendente, em progresso, concluída, cancelada)
+3. **Prioridades**: Baixa, média, alta, urgente
+4. **Filtros**: Por status, prioridade, data de vencimento
+5. **Estatísticas**: Dashboard com métricas das tarefas
+6. **Segurança**: Cada usuário vê apenas suas próprias tarefas
 
 ### Fluxo de Autenticação
 1. **Registro**: Usuário cria conta com email/username/senha
@@ -216,16 +298,19 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ```
 login-auth/
 ├── backend/
-│   ├── accounts/                # App de autenticação
-│   │   ├── models.py           # Modelos de dados
+│   ├── accounts/                # App de autenticação e tarefas
+│   │   ├── models.py           # Modelos (User, Task)
 │   │   ├── serializers.py      # Serializers da API
 │   │   ├── views.py            # Views da API
+│   │   ├── admin.py            # Admin interface
 │   │   └── urls.py             # URLs do app
 │   ├── login_projeto/          # Configurações Django
 │   │   ├── settings.py         # Configurações principais
 │   │   └── urls.py             # URLs principais
 │   ├── requirements.txt        # Dependências Python
 │   ├── manage.py              # Script de gerenciamento Django
+│   ├── create_sample_tasks.py  # Script para criar tarefas de exemplo
+│   ├── TASKS_API.md           # Documentação da API de tarefas
 │   └── .env                   # Variáveis de ambiente
 ├── frontend/
 │   └── auth-frontend/         # App React
@@ -329,7 +414,114 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
+#### 5. Problemas com Tarefas
+```bash
+# Se as tarefas não aparecem, verifique autenticação
+# Certifique-se de enviar o token JWT no header Authorization
+
+# Para criar tarefas de exemplo:
+cd backend
+python manage.py shell < create_sample_tasks.py
+
+# Verificar no Django Admin:
+# http://localhost:8000/admin/accounts/task/
+```
+
 ### Logs Úteis
 - **Backend**: Console Django (onde roda `python manage.py runserver`)
 - **Frontend**: Console do navegador (F12 → Console)
 - **Database**: Docker logs (`docker logs postgres`)
+
+## 🛡 Segurança
+
+### Implementações de Segurança
+- ✅ **JWT Tokens** - Autenticação stateless
+- ✅ **Password Validation** - Validação de senhas fortes
+- ✅ **CORS Protection** - Controle de origem das requisições
+- ✅ **CSRF Protection** - Proteção contra ataques CSRF
+- ✅ **SQL Injection Protection** - ORM Django protege automaticamente
+- ✅ **XSS Protection** - Headers de segurança configurados
+- ✅ **Isolamento de Dados** - Usuários só acessam suas próprias tarefas
+
+### Recomendações para Produção
+- [ ] Usar HTTPS (SSL/TLS)
+- [ ] Configurar `CORS_ALLOW_ALL_ORIGINS = False`
+- [ ] Definir `ALLOWED_HOSTS` específicos
+- [ ] Usar variáveis de ambiente para secrets
+- [ ] Implementar rate limiting
+- [ ] Configurar logs de segurança
+- [ ] Usar PostgreSQL em servidor dedicado
+
+## 📝 Próximos Passos
+
+### Melhorias para o Sistema de Tarefas
+- [ ] **Frontend para Tarefas** - Interface React para gerenciar tarefas
+- [ ] **Categorias/Tags** - Organização adicional para tarefas
+- [ ] **Subtarefas** - Hierarquia de tarefas
+- [ ] **Anexos** - Upload de arquivos nas tarefas
+- [ ] **Comentários** - Sistema de comentários nas tarefas
+- [ ] **Notificações** - Alertas para prazos próximos
+- [ ] **Relatórios** - Dashboard com gráficos e métricas
+- [ ] **Colaboração** - Compartilhar tarefas entre usuários
+- [ ] **API de Busca** - Busca avançada em tarefas
+- [ ] **Exportação** - Export para CSV/PDF
+
+### Melhorias Gerais
+- [ ] Reset de senha por email
+- [ ] Verificação de email
+- [ ] Autenticação em duas etapas (2FA)
+- [ ] OAuth (Google, GitHub)
+- [ ] Perfil de usuário completo
+- [ ] Upload de avatar
+- [ ] Histórico de logins
+- [ ] Testes automatizados
+- [ ] CI/CD Pipeline
+- [ ] Documentação com Swagger
+
+## 📊 Recursos Adicionais
+
+### Documentação Técnica
+- 📄 `backend/TASKS_API.md` - Documentação completa da API de tarefas
+- 🐳 `docker-compose.yml` - Configuração dos containers
+- ⚙️ `backend/create_sample_tasks.py` - Script para dados de exemplo
+
+### Comandos Úteis
+```bash
+# Criar dados de exemplo
+python manage.py shell < create_sample_tasks.py
+
+# Acessar Django Admin
+python manage.py createsuperuser
+# http://localhost:8000/admin/
+
+# Verificar migrações
+python manage.py showmigrations
+
+# Shell do Django
+python manage.py shell
+
+# Coletar arquivos estáticos
+python manage.py collectstatic
+```
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/TaskManager`)
+3. Commit suas mudanças (`git commit -m 'Add task management system'`)
+4. Push para a branch (`git push origin feature/TaskManager`)
+5. Abra um Pull Request
+
+## 👨‍💻 Autor
+
+**Gustavo Rizerio**
+- GitHub: [@GustavoRizerioDev](https://github.com/GustavoRizerioDev)
+- LinkedIn: [Gustavo Rizerio](https://linkedin.com/in/gustavo-rizerio)
+
+---
+
+⭐ **Se este projeto te ajudou, considere dar uma estrela!**
