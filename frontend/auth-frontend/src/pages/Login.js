@@ -52,10 +52,16 @@ export default function Login() {
       });
       localStorage.setItem("access_token", res.data.access);
       localStorage.setItem("refresh_token", res.data.refresh);
+      
+      // Salvar dados do usuário
+      localStorage.setItem("user_data", JSON.stringify({
+        username: username
+      }));
+      
       setShowSuccessPopup(true);
       setTimeout(() => {
         setShowSuccessPopup(false);
-        navigate("/users");
+        navigate("/tasks");
       }, 2000); 
     } catch (err) {
       console.error(err);
