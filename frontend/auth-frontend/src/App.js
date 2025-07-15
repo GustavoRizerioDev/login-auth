@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import UserList from "./pages/UserList";
+import TaskDashboard from "./pages/TaskDashboard";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/users" element={<UserList />} />
+            <Route path="/tasks" element={<TaskDashboard />} />
           </Routes>
         </div>
       </Router>
