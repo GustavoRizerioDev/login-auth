@@ -4,9 +4,7 @@ from .models import Task
 # Register your models here.
 
 @admin.register(Task)
-class TaskAdmin(admin.ModelAdmin):
-    """Configuração do admin para o modelo Task"""
-    
+class TaskAdmin(admin.ModelAdmin): 
     list_display = [
         'title', 'user', 'priority', 'status', 
         'due_date', 'created_at', 'is_overdue'
@@ -36,6 +34,5 @@ class TaskAdmin(admin.ModelAdmin):
     is_overdue.short_description = 'Atrasada'
     
     def get_queryset(self, request):
-        """Otimiza a query para incluir informações do usuário"""
         qs = super().get_queryset(request)
         return qs.select_related('user')

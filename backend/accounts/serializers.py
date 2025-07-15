@@ -1,4 +1,3 @@
-# accounts/serializers.py
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.utils import timezone
@@ -40,8 +39,6 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 class TaskSerializer(serializers.ModelSerializer):
-    """Serializer para o modelo Task"""
-    
     user = serializers.StringRelatedField(read_only=True)
     is_overdue = serializers.ReadOnlyField()
     is_completed = serializers.ReadOnlyField()
@@ -56,13 +53,10 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at', 'completed_at', 'user']
     
     def create(self, validated_data):
-        """Cria uma nova tarefa associada ao usuário logado"""
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
 class TaskCreateSerializer(serializers.ModelSerializer):
-    """Serializer simplificado para criação de tarefas"""
-    
     class Meta:
         model = Task
         fields = ['title', 'description', 'priority', 'due_date']
@@ -72,25 +66,19 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class TaskUpdateSerializer(serializers.ModelSerializer):
-    """Serializer para atualização de tarefas"""
-    
     class Meta:
         model = Task
         fields = ['title', 'description', 'priority', 'status', 'due_date']
     
     def update(self, instance, validated_data):
-        # Se mudando para concluída, definir data de conclusão
         if validated_data.get('status') == 'completed' and instance.status != 'completed':
             validated_data['completed_at'] = timezone.now()
-        # Se mudando de concluída para outro status, remover data de conclusão
         elif validated_data.get('status') != 'completed' and instance.status == 'completed':
             validated_data['completed_at'] = None
         
         return super().update(instance, validated_data)
 
 class TaskStatusSerializer(serializers.ModelSerializer):
-    """Serializer apenas para atualização do status"""
-    
     class Meta:
         model = Task
         fields = ['status']
